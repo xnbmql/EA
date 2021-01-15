@@ -1,2 +1,2 @@
-# selfmql
-自己写的mql
+# selfEA
+自己写的EA
