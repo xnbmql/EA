@@ -1,3 +1,4 @@
+// vim:filetype=cpp
 //+------------------------------------------------------------------+
 //|                                                      ProjectName |
 //|                                      Copyright 2012, CompanyName |
@@ -195,7 +196,7 @@ int OnCalculate(const int rates_total,
    return(rates_total);
   }
 
-MACDCOLOR getMacdColor(macdindex int, shift int){
+MACDCOLOR getMacdColor(int macdindex, int shift ){
 	
   double main = 0;
   double signal = 0;
