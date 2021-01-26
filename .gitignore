@@ -1,2 +1,4 @@
 *.cpp
 .nvimlog
+.ex4
+.dat
