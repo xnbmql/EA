@@ -8,6 +8,8 @@
 #property version   "1.00"
 #property strict
 #include <Arrays\ArrayInt.mqh>
+#include <Arrays\List.mqh>
+#include <Mylib\Trade\trade.mqh>
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -15,14 +17,22 @@
 int OnInit()
   {
 //---
-   int a[3];
-   a[0] = 1;
-   a[1] = 2;
-   a[2] = 3;
-   ArrayResize(a,0);
-   Print(ArraySize(a));
+  CList c;
+  OrderInfo *o1 = new OrderInfo(1314124);
+  //Free(ol);
+  c.Add(o1);
+   OrderInfo *o2 = new OrderInfo(2222);
+  //Free(ol);
+  c.Add(o2);
+  Print(c.Total());//---
+  c.MoveToIndex(0);
+  //c.GetNextNode();//---
+  
+  OrderInfo *oo =(OrderInfo *)c.GetNextNode();
+  
+  Print(oo.ticket);
 //---
-   return(INIT_SUCCEEDED);
+   return(INIT_FAILED);
   }
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
