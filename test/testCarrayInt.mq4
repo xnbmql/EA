@@ -24,13 +24,17 @@ int OnInit()
    OrderInfo *o2 = new OrderInfo(2222);
   //Free(ol);
   c.Add(o2);
-  Print(c.Total());//---
-  c.MoveToIndex(0);
+  Print("len",c.Total());//---
+  ////---
+  c.MoveToIndex(0);//---
+  
   //c.GetNextNode();//---
   
-  OrderInfo *oo =(OrderInfo *)c.GetNextNode();
-  
-  Print(oo.ticket);
+  //OrderInfo *oo =(OrderInfo *)c.GetNextNode();
+  //Print(oo.ticket);
+ Print("1",c.GetNextNode()==NULL);
+  Print("2",c.GetNextNode());
+    Print("3",c.GetNextNode()==NULL);
 //---
    return(INIT_FAILED);
   }
