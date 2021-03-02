@@ -18,23 +18,23 @@ int OnInit()
   {
 //---
   CList c;
-  OrderInfo *o1 = new OrderInfo(1314124);
+  OrderInfo *o1 = new OrderInfo(111);
   //Free(ol);
   c.Add(o1);
    OrderInfo *o2 = new OrderInfo(2222);
   //Free(ol);
   c.Add(o2);
-  Print("len",c.Total());//---
-  ////---
-  c.MoveToIndex(0);//---
+     OrderInfo *o3 = new OrderInfo(333);
+  //Free(ol);
+  c.Add(o3);
   
-  //c.GetNextNode();//---
-  
-  //OrderInfo *oo =(OrderInfo *)c.GetNextNode();
-  //Print(oo.ticket);
- Print("1",c.GetNextNode()==NULL);
-  Print("2",c.GetNextNode());
-    Print("3",c.GetNextNode()==NULL);
+for(int i=0;i<c.Total();i++){
+ OrderInfo *oo = (OrderInfo *)c.GetNodeAtIndex(i);
+   Print(oo.ticket);
+}
+c.Clear();
+Print(c.Total(),"-----");
+
 //---
    return(INIT_FAILED);
   }
