@@ -27,12 +27,28 @@ int OnInit()
      OrderInfo *o3 = new OrderInfo(333);
   //Free(ol);
   c.Add(o3);
-  
-for(int i=0;i<c.Total();i++){
- OrderInfo *oo = (OrderInfo *)c.GetNodeAtIndex(i);
-   Print(oo.ticket);
+ OrderInfo *oo1 = (OrderInfo *)c.GetNodeAtIndex(0);
+   Print(oo1.ticket);  
+ OrderInfo *oo2 = (OrderInfo *)c.GetNodeAtIndex(0);
+   Print(oo2.ticket);  
+//for(int i=0;i<c.Total();i++){
+// OrderInfo *oo = (OrderInfo *)c.GetNodeAtIndex(i);
+//   Print(oo.ticket);
+//}
+c.MoveToIndex(0);
+
+while(true){
+   OrderInfo *ooloop = (OrderInfo *)c.GetCurrentNode();
+   if(ooloop == NULL){
+      break;
+   }
+
+   Print(ooloop.ticket);
+      c.DeleteCurrent();
+   
 }
-c.Clear();
+
+//c.Clear();
 Print(c.Total(),"-----");
 
 //---
