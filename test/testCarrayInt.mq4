@@ -31,6 +31,7 @@ int OnInit()
    Print(oo1.ticket);  
  OrderInfo *oo2 = (OrderInfo *)c.GetNodeAtIndex(0);
    Print(oo2.ticket);  
+   Date
 //for(int i=0;i<c.Total();i++){
 // OrderInfo *oo = (OrderInfo *)c.GetNodeAtIndex(i);
 //   Print(oo.ticket);
