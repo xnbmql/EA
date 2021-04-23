@@ -42,6 +42,8 @@ void OnTick()
   {
 //---
    Print("jump");
+   //Print(TimeLocal());
+   //Print("-----------------------------",om.FloatProfit());
    oi.Update();
    soi.Update();
   }
