@@ -33,23 +33,23 @@ public:
    // 关闭所有本货币的订单和其他货币的订单
    // bool CloseCurrentAllAndOtherAll(); //this operate is dangerous, waitting
    // 平多单
-   bool              CloseAllBuyOrders(color clr=clrLime);
+   bool              CloseAllBuyOrders(color clr=clrNONE);
    // 平买单
-   bool              CloseAllSellOrders(color clr=clrLime);
+   bool              CloseAllSellOrders(color clr=clrNONE);
    // 平所有
-   bool              CloseAllOrders(color clr=clrLime);
+   bool              CloseAllOrders(color clr=clrNONE);
    // 关闭对应的订单
-   bool              CloseOrder(int ticket,color clr=clrLime);
+   bool              CloseOrder(int ticket,color clr=clrNONE);
 
 
-   bool              CloseFirstBuyOrder(color clr=clrLime);
-   bool              CloseFirstSellOrder(color clr=clrLime);
+   bool              CloseFirstBuyOrder(color clr=clrNONE);
+   bool              CloseFirstSellOrder(color clr=clrNONE);
 
-   bool              CloseProfitOrders(color clr=clrLime); // 平盈利单
-   bool              CloseLossOrders(color clr=clrLime); // 平亏损单
+   bool              CloseProfitOrders(color clr=clrNONE); // 平盈利单
+   bool              CloseLossOrders(color clr=clrNONE); // 平亏损单
 
-   CList*            GetAllBuyOpenningList(){return buyOpenOrders;};
-   CList*            GetAllSellOpenningList(){return sellOpenOrders;};
+   CList*            GetAllBuyOpenningList() {return buyOpenOrders;};
+   CList*            GetAllSellOpenningList() {return sellOpenOrders;};
    //bool OpenPairOrders();
    //bool GetPairOrders();
    // 获取固定的收益 (关闭订单的收益)
@@ -72,7 +72,7 @@ public:
    int               BuyWithStAndTp(double volume,int stopLossPoint=0, int takeProfitPoint=0,bool stopTrace = false,datetime expiration=0,string comment=NULL,color arrowColor=clrNONE);
    int               SellWithStAndTp(double volume,int stopLossPoint=0, int takeProfitPoint=0,bool stopTrace = false,datetime expiration=0,string comment=NULL,color arrowColor=clrNONE);
 
-   bool SetOldOrdersIntoCurrentList();
+   bool              SetOldOrdersIntoCurrentList();
    // 挂单买
    // int               PenningBuy(double price, double volume,int stopLossPoint=0, int takeProfitPoint=0,datetime expiration=0,string comment=NULL,color arrowColor=clrNONE);
    // 挂单卖
@@ -100,6 +100,7 @@ public:
    int               GetSellCount() {return buyCount;};
    int               GetBuyCount() {return sellCount;};
    bool              ReverseOrder();
+   bool              LoadOpenningOrder();
 
 private:
    int               buyCount;
@@ -132,11 +133,10 @@ private:
    CList             *sellLimitPenningOrders;
    // CList pendingOrders; //pendingOrder is similar nomral order
 
-   void              loadOpenningOrderInfo();
    bool              handleCloseOrder(OrderInfo* order);
    int               sendNormalOrder(int operation, double volume,color arrow_color=clrNONE);
    int               sendWithStAndTpOrder(int operation, double volume,int stopLossProfitPoint=0, int takeProfitPoint=0,datetime expiration=0,string commento=NULL,color arrow_color=clrNONE,bool stopTrace=false);
-   bool              closeAllByDirection(int operate,color clr=clrLime);
+   bool              closeAllByDirection(int operate,color clr=clrNONE);
    bool              updateByDirection(int operate);
    double            calculateTakeProfitByPoint(double price, int type, int takeProfitPoint);
    double            calculateStopLossByPoint(double price, int type, int stopLossPoint);
@@ -181,6 +181,9 @@ OrderManager::OrderManager(string commento,int magico, int slippageo)
    historyOrders= new CList;
   }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 OrderManager::OrderManager(string symbolo,string commento,int magico, int slippageo)
   {
    comment=commento;
@@ -286,60 +289,68 @@ bool OrderManager::updateByDirection(int operate)
    return true;
   }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool OrderManager::ReverseOrder()
-{
-  Update();
-  int btl = buyOpenOrders.Total();
-  double buyLots[];
-  ArrayResize(buyLots,btl);
-  int stl = sellOpenOrders.Total();
-  double sellLots[];
-  ArrayResize(sellLots,stl);
-  if(buyOpenOrders.Total()>0)
-   {
-    buyOpenOrders.MoveToIndex(0);
-    OrderInfo *oos = (OrderInfo *)buyOpenOrders.GetCurrentNode();
-    int index = 0;
-    while(oos!=NULL)
-      {
-       // buyTickets[index] = oos.GetTicket();
-       buyLots[index] = oos.GetLots();
-       oos = (OrderInfo *)buyOpenOrders.GetNextNode();
-       index++;
-      }
-   }
+  {
+   Update();
+   int btl = buyOpenOrders.Total();
+   double buyLots[];
+   ArrayResize(buyLots,btl);
+   int stl = sellOpenOrders.Total();
+   double sellLots[];
+   ArrayResize(sellLots,stl);
+   if(buyOpenOrders.Total()>0)
+     {
+      buyOpenOrders.MoveToIndex(0);
+      OrderInfo *oos = (OrderInfo *)buyOpenOrders.GetCurrentNode();
+      int index = 0;
+      while(oos!=NULL)
+        {
+         // buyTickets[index] = oos.GetTicket();
+         buyLots[index] = oos.GetLots();
+         oos = (OrderInfo *)buyOpenOrders.GetNextNode();
+         index++;
+        }
+     }
 
-  if(sellOpenOrders.Total()>0)
-   {
-    sellOpenOrders.MoveToIndex(0);
-    OrderInfo *oos = (OrderInfo *)sellOpenOrders.GetCurrentNode();
-    int index = 0;
-    while(oos!=NULL)
-      {
-       // sellTickets[index] = oos.GetTicket();
-       sellLots[index] = oos.GetLots();
-       oos = (OrderInfo *)sellOpenOrders.GetNextNode();
-       index++;
-      }
-   }
-  if(!CloseAllOrders()){
-    return false;
-  }
-  for(int i=0; i<btl;i++){
-    double lot = buyLots[i];
-    if(!Sell(lot)){
+   if(sellOpenOrders.Total()>0)
+     {
+      sellOpenOrders.MoveToIndex(0);
+      OrderInfo *oos = (OrderInfo *)sellOpenOrders.GetCurrentNode();
+      int index = 0;
+      while(oos!=NULL)
+        {
+         // sellTickets[index] = oos.GetTicket();
+         sellLots[index] = oos.GetLots();
+         oos = (OrderInfo *)sellOpenOrders.GetNextNode();
+         index++;
+        }
+     }
+   if(!CloseAllOrders())
+     {
       return false;
-    }
-  }
+     }
+   for(int i=0; i<btl; i++)
+     {
+      double lot = buyLots[i];
+      if(!Sell(lot))
+        {
+         return false;
+        }
+     }
 
-  for(int i=0; i<stl;i++){
-    double lot = sellLots[i];
-    if(!Buy(lot)){
-      return false;
-    }
+   for(int i=0; i<stl; i++)
+     {
+      double lot = sellLots[i];
+      if(!Buy(lot))
+        {
+         return false;
+        }
+     }
+   return true;
   }
-  return true;
-}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -363,7 +374,8 @@ bool OrderManager::CloseAllOldeOrders()
   }
 
 // 把旧的订单放入当前流程中
-bool OrderManager::SetOldOrdersIntoCurrentList(){
+bool OrderManager::SetOldOrdersIntoCurrentList()
+  {
 
    for(int i=0; i<OrdersTotal(); i++)
      {
@@ -371,7 +383,7 @@ bool OrderManager::SetOldOrdersIntoCurrentList(){
         {
          if(OrderSymbol()==symbol && OrderMagicNumber()==magic)
            {
-             addOrderByTicket(OrderTicket());
+            addOrderByTicket(OrderTicket());
             // OrderInfo *oo = new OrderInfo(OrderTicket()) ;
             // oldOpenOrders.Add(oo);
            }
@@ -379,38 +391,39 @@ bool OrderManager::SetOldOrdersIntoCurrentList(){
      }
    return Update();
 
-}
+  }
 
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void OrderManager::loadOpenningOrderInfo()
+bool OrderManager::LoadOpenningOrder()
   {
    for(int i=0; i<OrdersTotal(); i++)
      {
       if(OrderSelect(i, SELECT_BY_POS, MODE_TRADES))
         {
-         if(OrderSymbol()==symbol && OrderMagicNumber()==magic)
+         if(OrderSymbol()==symbol)
            {
-            OrderInfo *oo = new OrderInfo(OrderTicket()) ;
-            oldOpenOrders.Add(oo);
+            int ticket = OrderTicket();
+            //Print("tttttt: ",ticket);
+            return addOrderByTicket(ticket);
            }
         }
      }
+   return Update();
   }
 
 
-
 // close all opening orders
-bool OrderManager::CloseAllOrders(color clr=clrLime)
+bool OrderManager::CloseAllOrders(color clr=clrNONE)
   {
    return CloseAllSellOrders(clr)&&CloseAllBuyOrders(clr);
   }
 
 
 // close all sell orders
-bool OrderManager::CloseAllSellOrders(color clr=clrLime)
+bool OrderManager::CloseAllSellOrders(color clr=clrNONE)
   {
    return closeAllByDirection(OP_SELL,clr);
   }
@@ -418,7 +431,7 @@ bool OrderManager::CloseAllSellOrders(color clr=clrLime)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool OrderManager::CloseAllBuyOrders(color clr=clrLime)
+bool OrderManager::CloseAllBuyOrders(color clr=clrNONE)
   {
    return closeAllByDirection(OP_BUY,clr);
   }
@@ -426,7 +439,7 @@ bool OrderManager::CloseAllBuyOrders(color clr=clrLime)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool OrderManager::closeAllByDirection(int operate,color clr=clrLime)
+bool OrderManager::closeAllByDirection(int operate,color clr=clrNONE)
   {
    CList *list;
    switch(operate)
@@ -443,9 +456,10 @@ bool OrderManager::closeAllByDirection(int operate,color clr=clrLime)
      };
    if(list.Total()> 0)
      {
-      list.MoveToIndex(0);
+
       while(true)
         {
+         list.MoveToIndex(0);
          OrderInfo *oo = (OrderInfo *)list.GetCurrentNode();
          if(oo == NULL)
            {
@@ -471,7 +485,7 @@ bool OrderManager::closeAllByDirection(int operate,color clr=clrLime)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool OrderManager::CloseFirstBuyOrder(color clr=clrLime)
+bool OrderManager::CloseFirstBuyOrder(color clr=clrNONE)
   {
    buyOpenOrders.MoveToIndex(0);
 
@@ -492,7 +506,7 @@ bool OrderManager::CloseFirstBuyOrder(color clr=clrLime)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool OrderManager::CloseFirstSellOrder(color clr=clrLime)
+bool OrderManager::CloseFirstSellOrder(color clr=clrNONE)
   {
    sellOpenOrders.MoveToIndex(0);
 
@@ -520,9 +534,12 @@ bool OrderManager::Sell(double volume,color arrow_color=clrNONE)
    return ticket!=0;
   }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 int OrderManager::BuyWithTicket(double volume,color arrow_color=clrNONE)
   {
-    return sendNormalOrder(OP_BUY,volume,arrow_color);
+   return sendNormalOrder(OP_BUY,volume,arrow_color);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -534,6 +551,9 @@ bool OrderManager::Buy(double volume,color arrow_color=clrNONE)
    return ticket!=0;
   }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 int OrderManager::SellWithTicket(double volume,color arrow_color=clrNONE)
   {
    return sendNormalOrder(OP_SELL,volume,arrow_color);
@@ -635,7 +655,7 @@ int OrderManager::PennigSellWithPoint(int pricePointDiff, double volume,int stop
    price = getBasePriceByOrderType(type) + MarketInfo(symbol,MODE_POINT)*pricePointDiff;
    double sl = calculateStopLossByPoint(getStopBasePriceByOrderType(type),type,stopLossPoint);
    double tp = calculateTakeProfitByPoint(getStopBasePriceByOrderType(type),type,takeProfitPoint);
-   //Print(" Bid:",Bid," pricePointDiff:",pricePointDiff," price:",price," type:",type," sl:",sl," tp:",tp," bp:",MarketInfo(Symbol(),MODE_BID)+MarketInfo(Symbol(),MODE_SPREAD)*MarketInfo(Symbol(),MODE_POINT));
+//Print(" Bid:",Bid," pricePointDiff:",pricePointDiff," price:",price," type:",type," sl:",sl," tp:",tp," bp:",MarketInfo(Symbol(),MODE_BID)+MarketInfo(Symbol(),MODE_SPREAD)*MarketInfo(Symbol(),MODE_POINT));
    return sendOrder(type,volume,price,slippage,sl,tp,commento,expiration,arrowColoro);
   }
 
@@ -699,12 +719,15 @@ int OrderManager::sendOrder(int cmd, double volume, double price, int slippageo,
      {
       return 0;
      }
-    OrderInfo *oo;
-    if(stopTrace&&stoploss>0){
+   OrderInfo *oo;
+   if(stopTrace&&stoploss>0)
+     {
       oo = new OrderInfo(ticket,stopTrace,stoploss);
-    }else{
+     }
+   else
+     {
       oo = new OrderInfo(ticket);
-    }
+     }
    switch(cmd)
      {
       case OP_BUY:
@@ -741,39 +764,49 @@ int OrderManager::sendOrder(int cmd, double volume, double price, int slippageo,
 
 // 将订单加入到当前列表中
 bool OrderManager::addOrderByTicket(int ticket)
-{
+  {
    OrderInfo *oo = new OrderInfo(ticket);
-   if(!oo.Update()){
-     Print("订单更新错误，订单id：",ticket);
-     return false;
-   }
-   if(oo.GetState()!=ORDER_STATE_OPENING || oo.GetState()!=ORDER_STATE_PENDING){
-     return handleCloseOrder(oo);
-   }
+   if(!oo.Update())
+     {
+      Print("订单更新错误，订单id：",ticket);
+      return false;
+     }
+   Print("ss:",oo.GetState());
+   if(oo.GetState()!=ORDER_STATE_OPENING && oo.GetState()!=ORDER_STATE_PENDING)
+     {
+      return handleCloseOrder(oo);
+     }
+   Print("load: ",ticket);
    switch(oo.GetType())
      {
       case OP_BUY:
-         buyOpenOrders.Add(oo);
+         //buyOpenOrders.Add(oo);
+         addToList(buyOpenOrders,ticket);
          buyCount++;
          break;
       case OP_SELL:
-         sellOpenOrders.Add(oo);
+         //sellOpenOrders.Add(oo);
+         addToList(sellOpenOrders,ticket);
          sellCount++;
          break;
       case OP_SELLLIMIT:
-         sellLimitPenningOrders.Add(oo);
+         //sellLimitPenningOrders.Add(oo);
+         addToList(sellLimitPenningOrders,ticket);
          sellLimitPenningCount++;
          break;
       case OP_SELLSTOP:
-         sellStopPenningOrders.Add(oo);
+         //sellStopPenningOrders.Add(oo);
+         addToList(sellStopPenningOrders,ticket);
          sellStopPenningCount++;
          break;
       case OP_BUYLIMIT:
-         buyLimitPenningOrders.Add(oo);
+         //buyLimitPenningOrders.Add(oo);
+         addToList(buyLimitPenningOrders,ticket);
          buyLimitPenningCount++;
          break;
       case OP_BUYSTOP:
-         buyStopPenningOrders.Add(oo);
+         //buyStopPenningOrders.Add(oo);
+         addToList(buyStopPenningOrders,ticket);
          buyStopPenningCount++;
          break;
       default:
@@ -782,7 +815,44 @@ bool OrderManager::addOrderByTicket(int ticket)
          break;
      }
    return true;
-}
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool addToList(CList *list,int  ticket)
+  {
+   OrderInfo *oo = new OrderInfo(ticket);
+   if(!isExistInOrderList(list,ticket))
+     {
+      Print("added: ",ticket);
+      list.Add(oo);
+     }
+   return true;
+  }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool isExistInOrderList(CList *list,int  ticket)
+  {
+   if(list.Total()>0)
+     {
+      list.MoveToIndex(0);
+      OrderInfo *oos = (OrderInfo *)list.GetCurrentNode();
+      while(oos!=NULL)
+        {
+         int exist_ticket = oos.GetTicket();
+         if(exist_ticket  == ticket)
+           {
+            return true;
+           }
+         oos = (OrderInfo *)list.GetNextNode();
+        }
+     }
+   return false;
+
+  }
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -862,7 +932,7 @@ double OrderManager::FloatProfit(void)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool OrderManager::CloseProfitOrders(color clr=clrLime)
+bool OrderManager::CloseProfitOrders(color clr=clrNONE)
   {
    if(buyOpenOrders.Total()>0)
      {
@@ -911,7 +981,7 @@ bool OrderManager::CloseProfitOrders(color clr=clrLime)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-bool OrderManager::CloseLossOrders(color clr=clrLime)
+bool OrderManager::CloseLossOrders(color clr=clrNONE)
   {
    if(buyOpenOrders.Total()>0)
      {
