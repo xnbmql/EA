@@ -11,7 +11,10 @@
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
-#include "Ordermanager.mqh"
+#include <Mylib\Trade\Ordermanager.mqh>
+//#include "Ordermanager.mqh"
+#include "MTPanels.mqh"
+
 #include <arrays\list.mqh>
 input int OpenMagic = 210803; // 魔术码
 input int Slippage = 30; // 滑点
@@ -23,11 +26,13 @@ int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
 
+MTPanels mtp;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 int OnInit()
   {
+   mtp.Create(0,"ttt",0,20,20,460,460);
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
@@ -35,6 +40,7 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
   {
+     mtp.Destroy(0);
   }
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
@@ -63,5 +69,5 @@ void OnChartEvent(const int id,
                   const double& dparam,
                   const string& sparam)
   {
-
+   mtp.ChartEvent(id,lparam,dparam,sparam);
   }

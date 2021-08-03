@@ -20,74 +20,53 @@
 #define EDIT_LEN                           (10)
 
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
 class InputButton : public CWndContainer
   {
 
 private:
-   CButton           btn;
-   CEdit             ed;
-   RowPositionCalculate pc;
+      CButton  btn;
+      CEdit    ed;
+      RowPositionCalculate pc;
 public:
                      InputButton(void);
                     ~InputButton(void);
    virtual bool      Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2);
    virtual bool      OnEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
-   bool              Value(const string value) {return ed.Text(value); };
-   string            Value() {return ed.Text(); };
-   bool              InitAll(string btnText,string iValue)
-     {
-      if(!btn.Text(btnText)){
-         return false;
-      }
-      if(!ed.Text(iValue)){
-      return false;}
-      return true;
-     };
-   bool              OnClickBtn();
+   bool Value(const string value){return ed.Text(value); };
+   string Value(){return ed.Text(); };
+   bool InitAll(string btnText,string iValue){
+     btn.Text(btnText);
+     ed.Text(iValue);
+   };
+   bool OnClickBtn();
 protected:
-   virtual bool      CreateButton();
-   virtual bool      CreateEdit();
+  virtual bool   CreateButton();
+  virtual bool   CreateEdit();
   }
 
 
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
 EVENT_MAP_BEGIN(InputButton)
 EVENT_MAP_END(CWndContainer)
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool InputButton::Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2)
-  {
+bool InputButton::Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2){
    if(!CWndContainer::Create(chart,name,subwin,x1,y1,x2,y2))
      {
       return(false);
      }
 
    RowPositionCalculate pc(0,0,x2-x1,y2-y1);
-   if(!CreateEdit())
-     {
+   if(!CreateEdit()){
       return false;
-     }
-   if(!CreateButton())
-     {
+   }
+   if(!CreateButton()){
       return false;
-     }
+   }
    return true;
-  }
+}
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool InputButton::CreateButton()
-  {
-   XY xy = pc.RegisterElement(BUTTON_LEN);
+bool InputButton::CreateButton(){
+  XY xy = pc.RegisterElement(BUTTON_LEN);
    if(xy.X1<=0)
      {
       return false;
@@ -107,15 +86,11 @@ bool InputButton::CreateButton()
       return false;
      }
    return true;
-  }
+}
 
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-bool InputButton::CreateEdit()
-  {
-   XY xy = pc.RegisterElement(EDIT_LEN);
+bool InputButton::CreateEdit(){
+  XY xy = pc.RegisterElement(EDIT_LEN);
    if(xy.X1<=0)
      {
       return false;
@@ -135,7 +110,6 @@ bool InputButton::CreateEdit()
       return false;
      }
    return true;
-  }
+}
 
 
-//+------------------------------------------------------------------+
