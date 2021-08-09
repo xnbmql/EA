@@ -29,7 +29,7 @@ class InputButton : public CWndContainer
 private:
    CButton           btn;
    CEdit             ed;
-   RowPositionCalculate pc;
+   RowPositionCalculate *pc;
 public:
                      InputButton(void);
                     ~InputButton(void);
@@ -39,20 +39,28 @@ public:
    string            Value() {return ed.Text(); };
    bool              InitAll(string btnText,string iValue)
      {
-      if(!btn.Text(btnText)){
+      if(!btn.Text(btnText))
+        {
          return false;
-      }
-      if(!ed.Text(iValue)){
-      return false;}
+        }
+      if(!ed.Text(iValue))
+        {
+         return false;
+        }
       return true;
      };
    bool              OnClickBtn();
 protected:
    virtual bool      CreateButton();
    virtual bool      CreateEdit();
-  }
+  };
 
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+InputButton::InputButton(void) {}
+InputButton::~InputButton(void) {}
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -70,7 +78,7 @@ bool InputButton::Create(const long chart,const string name,const int subwin,con
       return(false);
      }
 
-   RowPositionCalculate pc(0,0,x2-x1,y2-y1);
+   pc = new RowPositionCalculate(0,0,x2-x1,y2-y1);
    if(!CreateEdit())
      {
       return false;
