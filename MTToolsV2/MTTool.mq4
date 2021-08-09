@@ -1,6 +1,6 @@
 // vim:filetype=cpp
 //+------------------------------------------------------------------+
-//|                                                      MTTool.mq4  |
+//|                                                      MTTool.mq5  |
 //|                        Copyright 2021, MetaQuotes Software Corp. |
 //|  https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-2315001482 |
 //+------------------------------------------------------------------+
@@ -11,7 +11,7 @@
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
-#include <Mylib\Trade\Ordermanager.mqh>
+//#include <Mylib\Trade\Ordermanager.mqh>
 //#include "Ordermanager.mqh"
 #include "MTPanels.mqh"
 
@@ -26,13 +26,18 @@ int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
 
+OrderManager *om;
 MTPanels mtp;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 int OnInit()
   {
-   mtp.Create(0,"ttt",0,20,20,460,460);
+   if(!mtp.Create(0,"MT助手v0.0.1",0,20,20,269,420)){
+      return(INIT_FAILED);
+   }
+   om = new OrderManager("OrderManager",OpenMagic,Slippage);
+   om.LoadOpenningOrder();
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
@@ -40,6 +45,8 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
   {
+     delete om;
+     ObjectsDeleteAll(0);
      mtp.Destroy(0);
   }
 //+------------------------------------------------------------------+
@@ -57,6 +64,8 @@ void OnTick()
       Sleep(3000);
       ExpertRemove();
      }
+   om.LoadOpenningOrder();
+   om.Update();
   }
 //+------------------------------------------------------------------+
 
