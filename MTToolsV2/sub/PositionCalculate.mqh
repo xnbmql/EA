@@ -29,6 +29,7 @@ private:
    //CList
 public:
                      RowPositionCalculate(int xStart, int yStart, int xEnd, int yEnd);
+                     RowPositionCalculate();
                     ~RowPositionCalculate(void);
    // register a elment
    // params:
@@ -44,17 +45,21 @@ private:
    bool              verifyElement(int cols,int topPadding=2, int bottomPadding=2, int leftPadding=2, int rightPadding=2);
   };
 
+RowPositionCalculate::RowPositionCalculate() {}
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 RowPositionCalculate::RowPositionCalculate(int xStart, int yStart, int xEnd, int yEnd)
   {
-   rowXStart = xStart+2;
+   rowXStart = xStart;
    rowYStart = yStart;
    rowXEnd = xEnd;
    rowYEnd = yEnd;
+
    singleRowHeight = (rowYEnd  - rowYStart);
    singleColWeight = (rowXEnd - rowXStart)/20;
+   rowXStart+=2;
 
   }
 
@@ -71,14 +76,23 @@ RowPositionCalculate::~RowPositionCalculate(void)
 //+------------------------------------------------------------------+
 XY RowPositionCalculate::RegisterElement(int cols,int topPadding=2, int bottomPadding=2, int leftPadding=0, int rightPadding=2)
   {
+   Print(currentOccupyCols," ----  ",cols);
    if(!verifyElement(cols, topPadding,bottomPadding,leftPadding,rightPadding))
      {
-      XY xy(-1,-1,-1,-1);
-      Print("new element error, too big for those cols");
-      return xy;
+    
+        if(currentOccupyCols+cols > 20)
+        {
+         XY xy(-1,-1,-1,-1);
+         Print("new element error, too big for those cols");
+         return xy;
+        }
      }
    int cxs = currentOccupyCols*singleColWeight+rowXStart;
    int cxe = cxs+cols*singleColWeight;
+   if(currentOccupyCols+cols == 20)
+     {
+      cxe-=2;
+     }
    currentOccupyCols += cols;
    XY xy(cxs+leftPadding,cxe-rightPadding, rowYStart+topPadding, rowYEnd - bottomPadding);
    return xy;
