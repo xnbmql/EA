@@ -38,6 +38,7 @@ int OnInit()
    }
    om = new OrderManager("OrderManager",OpenMagic,Slippage);
    om.LoadOpenningOrder();
+   mtp.SetOrderManager(om);
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
