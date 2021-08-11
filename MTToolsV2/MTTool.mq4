@@ -26,11 +26,8 @@ int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
 
-long login_1 = 3;
-long login_2 = 6934445;
-long login_3 = 1;
-long login_4 = 1;
-long login_5 = 1;
+// 将账号填入这里，英文逗号分割
+long loginAccounts[] = {6934445, 1,2,3,4,5,6};
 
 OrderManager *om;
 MTPanels mtp;
@@ -48,29 +45,16 @@ int OnInit()
       Sleep(3000);
       ExpertRemove();
      }
-     
-//+------------------------------------------------------------------+
-//string account1 = AccountInfoString(ACCOUNT_NAME);
-//Print("账户名称：",account1);
-   long login=AccountInfoInteger(ACCOUNT_LOGIN);
-   Print("账户ID: ",login);
 
-   if((login==login_1) ||(login==login_2) || (login==login_3) || (login==login_4) || (login==login_5))
-     {
-      Print("账号验证成功...");
-     }
-   else
+   if(!accountVaild())
      {
       Alert("此账号暂无使用权限...");
       Sleep(3000);
       ExpertRemove();
      }
 
-//+------------------------------------------------------------------+
    if(!mtp.Create(0,"MT助手v0.0.1",0,20,20,269,420))
      {
-      //if(!mtp.Create(0,"mttt",0,20,20,300,450))
-      //{
       return(INIT_FAILED);
      }
    om = new OrderManager("OrderManager",OpenMagic,Slippage);
@@ -79,6 +63,23 @@ int OnInit()
    mtp.Update();
    return(INIT_SUCCEEDED);
   }
+
+bool accountVaild(long accountID){
+  // ENUM_ACCOUNT_TRADE_MODE tradeMode=(ENUM_ACCOUNT_TRADE_MODE)AccountInfoInteger(ACCOUNT_TRADE_MODE);
+  // if(tradeMode == ACCOUNT_TRADE_MODE_DEMO)
+  //   {
+  //   Print("模拟模式随意使用");
+  //     return true;
+  //   }
+
+   long login=AccountInfoInteger(ACCOUNT_LOGIN);
+  for(int i=0;i<ArraySize(loginAccounts);i++){
+    if(loginAccounts[i]==accountID){
+      return true;
+    }
+  }
+  return false;
+}
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
