@@ -26,6 +26,12 @@ int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
 
+long login_1 = 3;
+long login_2 = 6934445;
+long login_3 = 1;
+long login_4 = 1;
+long login_5 = 1;
+
 OrderManager *om;
 MTPanels mtp;
 //+------------------------------------------------------------------+
@@ -33,12 +39,44 @@ MTPanels mtp;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-   if(!mtp.Create(0,"MT助手v0.0.1",0,20,20,269,420)){
+
+   datetime NY=D'2021.08.29 08:43:00'; //到期时间
+   datetime d1 = TimeLocal();
+   if(d1>NY)
+     {
+      Alert("已到期请续费：",GetLastError());
+      Sleep(3000);
+      ExpertRemove();
+     }
+     
+//+------------------------------------------------------------------+
+//string account1 = AccountInfoString(ACCOUNT_NAME);
+//Print("账户名称：",account1);
+   long login=AccountInfoInteger(ACCOUNT_LOGIN);
+   Print("账户ID: ",login);
+
+   if((login==login_1) ||(login==login_2) || (login==login_3) || (login==login_4) || (login==login_5))
+     {
+      Print("账号验证成功...");
+     }
+   else
+     {
+      Alert("此账号暂无使用权限...");
+      Sleep(3000);
+      ExpertRemove();
+     }
+
+//+------------------------------------------------------------------+
+   if(!mtp.Create(0,"MT助手v0.0.1",0,20,20,269,420))
+     {
+      //if(!mtp.Create(0,"mttt",0,20,20,300,450))
+      //{
       return(INIT_FAILED);
-   }
+     }
    om = new OrderManager("OrderManager",OpenMagic,Slippage);
    om.LoadOpenningOrder();
    mtp.SetOrderManager(om);
+   mtp.Update();
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
@@ -46,9 +84,10 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
   {
-     delete om;
-     ObjectsDeleteAll(0);
-     mtp.Destroy(0);
+   delete om;
+
+   mtp.Destroy(0);
+   ObjectsDeleteAll(0);
   }
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
@@ -56,17 +95,23 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
-   datetime NY=D'2021.08.29 08:43:00'; //到期时间
-   datetime d1 = TimeLocal();
-   //Print(TimeLocal());
-   if(d1>NY)
-     {
-      Alert("已到期请续费：",GetLastError());
-      Sleep(3000);
-      ExpertRemove();
-     }
+//   datetime NY=D'2021.08.29 08:43:00'; //到期时间
+//   datetime d1 = TimeLocal();
+//   if(d1>NY)
+//     {
+//      Alert("已到期请续费：",GetLastError());
+//      Sleep(3000);
+//      ExpertRemove();
+//     }
+//
+//   string account1 = AccountInfoString(ACCOUNT_NAME);
+//   Print("账户名称：",account1);
+//   long login=AccountInfoInteger(ACCOUNT_LOGIN);
+//   Print("账户ID: ",login);
+
    om.LoadOpenningOrder();
    om.Update();
+   mtp.Update();
   }
 //+------------------------------------------------------------------+
 
@@ -79,5 +124,8 @@ void OnChartEvent(const int id,
                   const double& dparam,
                   const string& sparam)
   {
+
+
    mtp.ChartEvent(id,lparam,dparam,sparam);
   }
+//+------------------------------------------------------------------+
