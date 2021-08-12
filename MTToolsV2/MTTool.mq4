@@ -9,7 +9,7 @@
 #property version   "1.00"
 #property strict
 
-#define link         
+#define link
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -65,6 +65,7 @@ int OnInit()
    om = new OrderManager("OrderManager",OpenMagic,Slippage);
    om.LoadOpenningOrder();
    mtp.SetOrderManager(om);
+   mtp.SetExpireDate(NY);
    mtp.Update();
    return(INIT_SUCCEEDED);
   }
