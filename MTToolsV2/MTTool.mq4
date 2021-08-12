@@ -4,10 +4,12 @@
 //|                        Copyright 2021, MetaQuotes Software Corp. |
 //|  https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-2315001482 |
 //+------------------------------------------------------------------+
-#property copyright "https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-2315001482"
-#property link      "19956480259"
+#property copyright "19956480259"
+#property link      "https://item.taobao.com/item.htm?spm=a230r.1.14.6.17b62fd1qPtyG4&id=651269419591&ns=1&abbucket=10#detail"
 #property version   "1.00"
 #property strict
+
+#define link         
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -27,7 +29,10 @@ int PendingSellOrderPoint = 0; // 挂单卖出点数
 input int FontSize = 8; // 字体大小
 
 // 将账号填入这里，英文逗号分割
-long loginAccounts[] = {6934445, 1,2,3,4,5,6};
+long loginAccounts[] = {6934445,1,2,3,4,5,6};
+
+//是否开启绑定  false是不开启 true是开启
+bool IsOpenLock = false;
 
 OrderManager *om;
 MTPanels mtp;
@@ -46,7 +51,7 @@ int OnInit()
       ExpertRemove();
      }
 
-   if(!accountVaild())
+   if(!accountVaild() && IsOpenLock)
      {
       Alert("此账号暂无使用权限...");
       Sleep(3000);
@@ -64,22 +69,28 @@ int OnInit()
    return(INIT_SUCCEEDED);
   }
 
-bool accountVaild(long accountID){
-  // ENUM_ACCOUNT_TRADE_MODE tradeMode=(ENUM_ACCOUNT_TRADE_MODE)AccountInfoInteger(ACCOUNT_TRADE_MODE);
-  // if(tradeMode == ACCOUNT_TRADE_MODE_DEMO)
-  //   {
-  //   Print("模拟模式随意使用");
-  //     return true;
-  //   }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool accountVaild()
+  {
+// ENUM_ACCOUNT_TRADE_MODE tradeMode=(ENUM_ACCOUNT_TRADE_MODE)AccountInfoInteger(ACCOUNT_TRADE_MODE);
+// if(tradeMode == ACCOUNT_TRADE_MODE_DEMO)
+//   {
+//     Print("模拟模式随意使用");
+//     return true;
+//   }
 
-   long login=AccountInfoInteger(ACCOUNT_LOGIN);
-  for(int i=0;i<ArraySize(loginAccounts);i++){
-    if(loginAccounts[i]==accountID){
-      return true;
-    }
+   long accountID=AccountInfoInteger(ACCOUNT_LOGIN);
+   for(int i=0; i<ArraySize(loginAccounts); i++)
+     {
+      if(loginAccounts[i]==accountID)
+        {
+         return true;
+        }
+     }
+   return false;
   }
-  return false;
-}
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
