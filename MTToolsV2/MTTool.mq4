@@ -4,12 +4,13 @@
 //|                        Copyright 2021, MetaQuotes Software Corp. |
 //|  https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-2315001482 |
 //+------------------------------------------------------------------+
-#property copyright "19956480259"
-#property link      "https://item.taobao.com/item.htm?spm=a230r.1.14.6.17b62fd1qPtyG4&id=651269419591&ns=1&abbucket=10#detail"
+#property copyright "一键加群"
+#property link      "https://www.baidu.com"
 #property version   "1.00"
 #property strict
 
-#define link
+
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -41,7 +42,6 @@ MTPanels mtp;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-
    datetime NY=D'2021.08.29 08:43:00'; //到期时间
    datetime d1 = TimeLocal();
    if(d1>NY)
