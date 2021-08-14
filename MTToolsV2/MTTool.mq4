@@ -4,8 +4,9 @@
 //|                        Copyright 2021, MetaQuotes Software Corp. |
 //|  https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-2315001482 |
 //+------------------------------------------------------------------+
-#property copyright "一键加群"
-#property link      "https://www.baidu.com"
+#property copyright  "一键加群"
+#property link     "https://www.baidu.com"
+
 #property version   "1.00"
 #property strict
 
