@@ -58,7 +58,7 @@ int OnInit()
       ExpertRemove();
      }
 
-   if(!mtp.Create(0,"MT助手v0.0.1",0,20,20,269,420))
+   if(!mtp.Create(0,"MT助手v0.0.1",0,20,20,269,440))
      {
       return(INIT_FAILED);
      }
