@@ -29,7 +29,7 @@ int PendingBuyOrderPoint = 0; // 挂单买入点数
 int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
-
+string MYURL = "http://baidu.com"; // 一键加群的链接
 // 将账号填入这里，英文逗号分割
 long loginAccounts[] = {6934445,1,2,3,4,5,6};
 
@@ -58,9 +58,17 @@ int OnInit()
       Sleep(3000);
       ExpertRemove();
      }
+     
+    if(IsDllsAllowed()==false)
+    {
+      Alert("请允许dll（工具--》选项--》EA交易--》允许DLL），再运行");
+      Sleep(3000);
+      ExpertRemove();
+    }
 
-   if(!mtp.Create(0,"MT助手v0.0.1",0,20,20,269,440))
+   if(!mtp.Create(0,"MT4交易助手",0,20,20,269,440))
      {
+     Print("新建助手失败");
       return(INIT_FAILED);
      }
    om = new OrderManager("OrderManager",OpenMagic,Slippage);
@@ -68,6 +76,7 @@ int OnInit()
    mtp.SetOrderManager(om);
    mtp.SetExpireDate(NY);
    mtp.Update();
+   mtp.SetSpecURL(MYURL);
    return(INIT_SUCCEEDED);
   }
 

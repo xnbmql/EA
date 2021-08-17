@@ -113,7 +113,7 @@ bool MInput::CreateLabel()
      {
       return false;
      }
-   Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
+   //Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
    if(!m_label.Create(m_chart_id,m_name+"label",m_subwin, xy.X1,xy.Y1,xy.X2,xy.Y2))
      {
       return false;
@@ -156,7 +156,7 @@ bool MInput::CreateEdit()
      {
       return false;
      }
-   Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
+   //Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
    if(!ed.Create(m_chart_id,m_name+"Btn",m_subwin, xy.X1,xy.Y1,xy.X2,xy.Y2))
      {
       return false;

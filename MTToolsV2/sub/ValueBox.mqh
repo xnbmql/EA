@@ -116,7 +116,7 @@ bool ValueBox::Create(const long chart,const string name,const int subwin,const 
      }
 
    pc = new RowPositionCalculate(0,0,x2-x1,y2-y1);
-   Print(x1," ",y1,"  ",x2,"  ", y2);
+   //Print(x1," ",y1,"  ",x2,"  ", y2);
    if(!CreatePlusUpUp())
      {
       Print("Create plus up up btn failed");

@@ -76,7 +76,7 @@ RowPositionCalculate::~RowPositionCalculate(void)
 //+------------------------------------------------------------------+
 XY RowPositionCalculate::RegisterElement(int cols,int topPadding=2, int bottomPadding=2, int leftPadding=0, int rightPadding=2)
   {
-   Print(currentOccupyCols," ----  ",cols);
+   ////Print(currentOccupyCols," ----  ",cols);
    if(!verifyElement(cols, topPadding,bottomPadding,leftPadding,rightPadding))
      {
     
