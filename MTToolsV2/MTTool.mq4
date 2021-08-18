@@ -37,12 +37,13 @@ long loginAccounts[] = {6934445,1,2,3,4,5,6};
 bool IsOpenLock = false;
 
 OrderManager *om;
-MTPanels mtp;
+MTPanels *mtp;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 int OnInit()
   {
+  Print("in in in");
    datetime NY=D'2021.08.29 08:43:00'; //到期时间
    datetime d1 = TimeLocal();
    if(d1>NY)
@@ -58,17 +59,29 @@ int OnInit()
       Sleep(3000);
       ExpertRemove();
      }
-     
-    if(IsDllsAllowed()==false)
-    {
+
+   if(IsDllsAllowed()==false)
+     {
       Alert("请允许dll（工具--》选项--》EA交易--》允许DLL），再运行");
       Sleep(3000);
       ExpertRemove();
-    }
-
-   if(!mtp.Create(0,"MT4交易助手",0,20,20,269,440))
+     }
+   int w = ChartWidthInPixels();
+   int h = ChartHeightInPixels();
+   int roww = w/4;
+   if(roww <= 180){
+      roww = 180;
+   }
+   int rowh = 21*(FontSize*3);
+      Print(rowh);
+   if(rowh<= 21*20){
+      rowh =21*20;
+   }
+   Print(rowh);
+   mtp = new MTPanels();
+   if(!mtp.Create(0,"MT4交易助手",0,w-roww-20,20,w-20,rowh+20))
      {
-     Print("新建助手失败");
+      Print("新建助手失败");
       return(INIT_FAILED);
      }
    om = new OrderManager("OrderManager",OpenMagic,Slippage);
@@ -77,6 +90,10 @@ int OnInit()
    mtp.SetExpireDate(NY);
    mtp.Update();
    mtp.SetSpecURL(MYURL);
+   
+   mtp.Run();
+   mtp.Minimized(false);
+   mtp.SetFontSize(FontSize);
    return(INIT_SUCCEEDED);
   }
 
@@ -102,14 +119,35 @@ bool accountVaild()
      }
    return false;
   }
+
+//+------------------------------------------------------------------+
+//| The function gets the distance in pixels between the upper frame |
+//| of the subwindow and the upper frame of the chart's main window. |
+//+------------------------------------------------------------------+
+int ChartWindowsYDistance(const long chart_ID=0,const int sub_window=0)
+  {
+//--- prepare the variable to get the property value
+   long result=-1;
+//--- reset the error value
+   ResetLastError();
+//--- receive the property value
+   if(!ChartGetInteger(chart_ID,CHART_WINDOW_YDISTANCE,sub_window,result))
+     {
+      //--- display the error message in Experts journal
+      Print(__FUNCTION__+", Error Code = ",GetLastError());
+     }
+//--- return the value of the chart property
+   return((int)result);
+  }
+
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
   {
    delete om;
-
    mtp.Destroy(0);
+   delete mtp;
    ObjectsDeleteAll(0);
   }
 //+------------------------------------------------------------------+
@@ -135,10 +173,12 @@ void OnTick()
    om.LoadOpenningOrder();
    om.Update();
    mtp.Update();
+
   }
 //+------------------------------------------------------------------+
 
 
+//bool tt = false;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -147,8 +187,48 @@ void OnChartEvent(const int id,
                   const double& dparam,
                   const string& sparam)
   {
+   if(id!=CHARTEVENT_CHART_CHANGE)
+     {
+      mtp.ChartEvent(id,lparam,dparam,sparam);
+     }
 
-
-   mtp.ChartEvent(id,lparam,dparam,sparam);
   }
+
+
 //+------------------------------------------------------------------+
+//| The function receives the chart width in pixels.                 |
+//+------------------------------------------------------------------+
+int ChartWidthInPixels(const long chart_ID=0)
+  {
+//--- prepare the variable to get the property value
+   long result=-1;
+//--- reset the error value
+   ResetLastError();
+//--- receive the property value
+   if(!ChartGetInteger(chart_ID,CHART_WIDTH_IN_PIXELS,0,result))
+     {
+      //--- display the error message in Experts journal
+      Print(__FUNCTION__+", Error Code = ",GetLastError());
+     }
+//--- return the value of the chart property
+   return((int)result);
+  }
+
+//+------------------------------------------------------------------+
+
+
+int ChartHeightInPixels(const long chart_ID=0)
+  {
+//--- prepare the variable to get the property value
+   long result=-1;
+//--- reset the error value
+   ResetLastError();
+//--- receive the property value
+   if(!ChartGetInteger(chart_ID,CHART_HEIGHT_IN_PIXELS,0,result))
+     {
+      //--- display the error message in Experts journal
+      Print(__FUNCTION__+", Error Code = ",GetLastError());
+     }
+//--- return the value of the chart property
+   return((int)result);
+  }

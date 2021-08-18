@@ -39,6 +39,10 @@ public:
    virtual bool      OnEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
    bool              Value(const string value) {return ed.Text(value); };
    string            Value() {return ed.Text(); };
+   bool              FontSize(const int value)
+     {
+      return ed.FontSize(value)&&m_label.FontSize(value);
+     };
    bool              InitAll(string m_labelText,string i_value,bool iread_only=false)
      {
       if(!m_label.Text(m_labelText))
@@ -113,7 +117,7 @@ bool MInput::CreateLabel()
      {
       return false;
      }
-   //Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
+//Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
    if(!m_label.Create(m_chart_id,m_name+"label",m_subwin, xy.X1,xy.Y1,xy.X2,xy.Y2))
      {
       return false;
@@ -156,7 +160,7 @@ bool MInput::CreateEdit()
      {
       return false;
      }
-   //Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
+//Print("X1:",xy.X1,"X2:",xy.X2,"Y1:",xy.Y1,"Y2:",xy.Y2);
    if(!ed.Create(m_chart_id,m_name+"Btn",m_subwin, xy.X1,xy.Y1,xy.X2,xy.Y2))
      {
       return false;
