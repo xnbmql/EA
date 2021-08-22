@@ -6,18 +6,10 @@
 //+------------------------------------------------------------------+
 #property copyright  "一键加群"
 
-//#property link     "https://www.baidu.com"
-#property link       "https://item.taobao.com/item.htm?spm=a230r.1.14.3.30bd4e3dI7HEYW&id=651269419591&ns=1&abbucket=16#detail"
+#property link     "https://www.baidu.com"
 #property version   "1.00"
 #property strict
 
-
-
-//+------------------------------------------------------------------+
-//| Expert initialization function                                   |
-//+------------------------------------------------------------------+
-//#include <Mylib\Trade\Ordermanager.mqh>
-//#include "Ordermanager.mqh"
 #include "MTPanels.mqh"
 
 #include <arrays\list.mqh>
@@ -45,7 +37,6 @@ MTPanels *mtp;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-  Print("in in in");
    datetime NY=D'2021.08.27 08:43:00'; //到期时间
    datetime d1 = TimeLocal();
    if(d1>NY)
@@ -68,17 +59,20 @@ int OnInit()
       Sleep(3000);
       ExpertRemove();
      }
+     
    int w = ChartWidthInPixels();
    int h = ChartHeightInPixels();
    int roww = w/4;
-   if(roww <= 180){
+   if(roww <= 180)
+     {
       roww = 180;
-   }
+     }
    int rowh = 21*(FontSize*3);
-      Print(rowh);
-   if(rowh<= 21*20){
+   Print(rowh);
+   if(rowh<= 21*20)
+     {
       rowh =21*20;
-   }
+     }
    Print(rowh);
    mtp = new MTPanels();
    if(!mtp.Create(0,"MT4交易助手",0,w-roww-20,20,w-20,rowh+20))
@@ -92,7 +86,7 @@ int OnInit()
    mtp.SetExpireDate(NY);
    mtp.Update();
    mtp.SetSpecURL(MYURL);
-   
+
    mtp.Run();
    mtp.Minimized(false);
    mtp.SetFontSize(FontSize);
@@ -158,19 +152,6 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
-//   datetime NY=D'2021.08.29 08:43:00'; //到期时间
-//   datetime d1 = TimeLocal();
-//   if(d1>NY)
-//     {
-//      Alert("已到期请续费：",GetLastError());
-//      Sleep(3000);
-//      ExpertRemove();
-//     }
-//
-//   string account1 = AccountInfoString(ACCOUNT_NAME);
-//   Print("账户名称：",account1);
-//   long login=AccountInfoInteger(ACCOUNT_LOGIN);
-//   Print("账户ID: ",login);
 
    om.LoadOpenningOrder();
    om.Update();
@@ -219,6 +200,9 @@ int ChartWidthInPixels(const long chart_ID=0)
 //+------------------------------------------------------------------+
 
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 int ChartHeightInPixels(const long chart_ID=0)
   {
 //--- prepare the variable to get the property value
@@ -234,3 +218,4 @@ int ChartHeightInPixels(const long chart_ID=0)
 //--- return the value of the chart property
    return((int)result);
   }
+//+------------------------------------------------------------------+
