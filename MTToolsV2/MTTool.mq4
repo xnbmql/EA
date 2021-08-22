@@ -5,8 +5,9 @@
 //|  https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-2315001482 |
 //+------------------------------------------------------------------+
 #property copyright  "一键加群"
-#property link     "https://www.baidu.com"
 
+//#property link     "https://www.baidu.com"
+#property link       "https://item.taobao.com/item.htm?spm=a230r.1.14.3.30bd4e3dI7HEYW&id=651269419591&ns=1&abbucket=16#detail"
 #property version   "1.00"
 #property strict
 
@@ -29,7 +30,8 @@ int PendingBuyOrderPoint = 0; // 挂单买入点数
 int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
-string MYURL = "http://baidu.com"; // 一键加群的链接
+//string MYURL = "http://baidu.com"; // 一键加群的链接
+string MYURL = "https://www.baidu.com"; // 一键加群的链接
 // 将账号填入这里，英文逗号分割
 long loginAccounts[] = {6934445,1,2,3,4,5,6};
 
@@ -44,7 +46,7 @@ MTPanels *mtp;
 int OnInit()
   {
   Print("in in in");
-   datetime NY=D'2021.08.29 08:43:00'; //到期时间
+   datetime NY=D'2021.08.27 08:43:00'; //到期时间
    datetime d1 = TimeLocal();
    if(d1>NY)
      {
@@ -146,7 +148,7 @@ int ChartWindowsYDistance(const long chart_ID=0,const int sub_window=0)
 void OnDeinit(const int reason)
   {
    delete om;
-   mtp.Destroy(0);
+   mtp.Destroy(reason);
    delete mtp;
    ObjectsDeleteAll(0);
   }
