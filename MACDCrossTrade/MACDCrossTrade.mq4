@@ -36,7 +36,6 @@ input ENUM_TIMEFRAMES ma_Period = PERIOD_CURRENT; // 均线时间轴
 int OnInit()
   {
    return(INIT_SUCCEEDED);
-
   }
 
 
@@ -48,3 +47,8 @@ void OnDeinit(const int reason)
 void OnTick()
   {
   }
+
+
+
+   // myMACDmain=iMACD(NULL,0,md1,md2,md3,PRICE_CLOSE,MODE_MAIN,shift);
+   // myMACDsignal=iMACD(NULL,0,md1,md2,md3,PRICE_CLOSE,MODE_SIGNAL,shift);
