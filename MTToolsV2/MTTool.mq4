@@ -22,8 +22,8 @@ int PendingBuyOrderPoint = 0; // 挂单买入点数
 int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
-//string MYURL = "http://baidu.com"; // 一键加群的链接
-string MYURL = "https://www.baidu.com"; // 一键加群的链接
+string MYURL = "http://baidu.com"; // 一键加群的链接
+//string MYURL = "https://item.taobao.com/item.htm?spm=a230r.1.14.8.30bd4e3dqk9kTD&id=651269419591&ns=1&abbucket=15#detail"; // 
 // 将账号填入这里，英文逗号分割
 long loginAccounts[] = {6934445,1,2,3,4,5,6};
 
@@ -37,7 +37,7 @@ MTPanels *mtp;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-   datetime NY=D'2021.08.27 08:43:00'; //到期时间
+   datetime NY=D'2022.02.23 08:43:00'; //到期时间
    datetime d1 = TimeLocal();
    if(d1>NY)
      {
