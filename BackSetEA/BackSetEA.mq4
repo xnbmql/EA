@@ -28,6 +28,17 @@ input int takeProfitPoint = 300; // 止盈
 input int addOrderTimeSpace = 5;// 加仓单开仓间隔时间 分钟
 input int addOrderPointSpace = 100;// 加仓单开仓亏损间隔点数
 input int addOrderLotsMul = 2; // 加仓单手数的倍数
+input int addOrderLimit = 10; // 加仓单数限制
+
+input int allProfitPoint = 20000; // 整体止盈线
+
+input int riskMoney = 1500; // 风控金额
+
+input bool riskCloseAll = true; // 风控平仓 (优先)
+input bool riskLockAll = false; // 风控锁单
+
+
+
 string comment ="绵羊EA";
 
 enum ENUM_PRICE_MA_POSITION
@@ -46,6 +57,10 @@ int OnInit()
     return(INIT_FAILED);
    }
    om = new OrderManager(comment,OpenMagic,Slippage);
+
+   if(!(riskLockAll|| riskCloseAll)){
+    return(INIT_FAILED);
+   }
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
@@ -94,8 +109,8 @@ void OnTick()
             Alert("开启首单空单错误：",GetLastError());
             return;
           }
-        FisrtOrderDirect = OP_SELL;
         order_status = FISRT;
+        FisrtOrderDirect = OP_SELL;
       }
     }
 
@@ -119,11 +134,32 @@ void OnTick()
 
     if(order_status == HEDGE || order_status == ADD){
       if(TimeSeconds(TimeCurrent()) - lastSeconds > 60 *addOrderTimeSpace){
-        if((om.FloatProfit() - lastProfit)/MarketInfo(Symbol(),MODE_POINT) < -addOrderPointSpace ){
+        if((om.FloatProfit() - lastProfit)/MarketInfo(Symbol(),MODE_POINT) < -addOrderPointSpace){
+          switch(FisrtOrderDirect){
+            case OP_SELL:
+              if(om.SellWithTicket()==0){
+                Alert("加仓失败:", GetLastError());
+              }
+              break;
+            case OP_BUY:
+              if(om.BuyWithTicket()==0){
+                Alert("加仓失败:", GetLastError());
+              }
+            default:
+              printf("加仓遇到未知类型：%d \n",FisrtOrderDirect);
+          }
+          lastProfit = om.FloatProfit();
+          lastSeconds = TimeSeconds(TimeCurrent());
+        }
+      }
+    }
 
+    if(om.FloatProfit()< -riskMoney){
+
+        if(riskCloseAll  ){
+          om.CloseAll()
         }
 
-      }
     }
 
 
