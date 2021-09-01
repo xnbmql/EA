@@ -23,6 +23,11 @@ input ENUM_APPLIED_PRICE MA_PRICE = PRICE_CLOSE; //均线应用价格
 input int OpenMagic = 210803; // 魔术码
 input int Slippage = 30; // 滑点
 input int InitLots = 0.01; // 初始手数
+input int HedgePoint = 100; // 对冲单开单亏损点数
+input int takeProfitPoint = 300; // 止盈
+input int addOrderTimeSpace = 5;// 加仓单开仓间隔时间 分钟
+input int addOrderPointSpace = 100;// 加仓单开仓亏损间隔点数
+input int addOrderLotsMul = 2; // 加仓单手数的倍数
 string comment ="绵羊EA";
 
 enum ENUM_PRICE_MA_POSITION
@@ -51,10 +56,18 @@ void OnDeinit(const int reason)
     delete om;
   }
 
-enum EUNM_ORDER_STATE{
+enum ENUM_ORDER_STATE{
   EMPTY = 0,
-
+  FISRT = 1,
+  HEDGE = 2,
+  ADD = 3
 };
+ENUM_ORDER_STATE order_status = EMPTY;
+
+int FisrtOrderDirect = 0;
+int FisrtTicket = 0;
+double lastProfit = 0.0;
+int lastSeconds = 0;
 
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
@@ -62,30 +75,64 @@ enum EUNM_ORDER_STATE{
 void OnTick()
   {
     // 首单
-    if(om.GetHandCount() == 0){
+    if(order_status==EMPTY){
       if(GetPriceMaPosition() == PRICE_ABOVE){
-        if(om.BuyWithTicket(InitLots)==0)
+      FisrtTicket = om.BuyWithStAndTp(InitLots,0,takeProfitPoint);
+        if(FisrtTicket==0)
           {
             Alert("开启首单多单错误：",GetLastError());
+            return;
           }
+        order_status = FISRT;
+        FisrtOrderDirect = OP_BUY;
       }
 
-      if(GetPriceMaPosition() == PRICE_ABOVE){
-        if(om.BuyWithTicket(InitLots)==0)
+      if(GetPriceMaPosition() == PRICE_BELOW){
+      FisrtTicket = om.SellWithStAndTp(InitLots,0,takeProfitPoint);
+        if(FisrtTicket == 0)
           {
             Alert("开启首单空单错误：",GetLastError());
+            return;
           }
+        FisrtOrderDirect = OP_SELL;
+        order_status = FISRT;
+      }
+    }
+
+    // 对冲单
+    if(order_status == FISRT){
+      if(om.FloatProfit() <= - HedgePoint * MarketInfo(Symbol(),MODE_POINT)){
+        if(om.BuyWithTicket(InitLots)==0){
+            Alert("开启首单空单错误：",GetLastError());
+            return;
+        }
+        if(om.SellWithTicket(InitLots)==0){
+            Alert("开启首单空单错误：",GetLastError());
+            return;
+        }
+        order_status = HEDGE;
+        CancelFirstOrderProfit()
+        lastProfit = om.FloatProfit();
+        lastSeconds = TimeSeconds(TimeCurrent());
+      }
+    }
+
+    if(order_status == HEDGE || order_status == ADD){
+      if(TimeSeconds(TimeCurrent()) - lastSeconds > 60 *addOrderTimeSpace){
+        if((om.FloatProfit() - lastProfit)/MarketInfo(Symbol(),MODE_POINT) < -addOrderPointSpace ){
+
+        }
+
       }
     }
 
 
-    // 对仓单
-    if(om.GetHandCount() == 1)
-    {
-
-    }
   }
 //+------------------------------------------------------------------+
+
+bool CancelFirstOrderProfit(){
+return false;
+}
 
 //+------------------------------------------------------------------+
 void OnChartEvent(const int id,
