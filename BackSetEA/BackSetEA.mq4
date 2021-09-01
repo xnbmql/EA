@@ -154,13 +154,20 @@ void OnTick()
       }
     }
 
-    if(om.FloatProfit()< -riskMoney){
-
-        if(riskCloseAll  ){
-          om.CloseAll()
+    if(om.FloatProfit() < -riskMoney){
+        if(riskCloseAll){
+          if(!om.CloseAllOrders()){
+            Alert("risk CloseAll error:",GetLastError());
+            return;
+          }
+        }else{
+          if(!om.LockOrders()){
+            Alert("risk lock error:",GetLastError());
+            return;
+          }
         }
-
     }
+
 
 
   }
