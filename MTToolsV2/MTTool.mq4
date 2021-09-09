@@ -39,6 +39,8 @@ MTPanels *mtp;
 //+------------------------------------------------------------------+
 int OnInit()
   {
+  Print("TERMINAL_SCREEN_DPI:",TerminalInfoInteger(TERMINAL_SCREEN_DPI));
+  int terminalDPI = TerminalInfoInteger(TERMINAL_SCREEN_DPI);
    datetime NY=D'2022.02.23 08:43:00'; //到期时间
    datetime d1 = TimeLocal();
    if(d1>NY)
@@ -64,6 +66,7 @@ int OnInit()
      
    int w = ChartWidthInPixels();
    int h = ChartHeightInPixels();
+   Print("w:",w," h: ",h);
    int roww = w/4;
    if(roww <= 180)
      {
@@ -221,3 +224,4 @@ int ChartHeightInPixels(const long chart_ID=0)
    return((int)result);
   }
 //+------------------------------------------------------------------+
+
