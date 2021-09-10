@@ -25,7 +25,7 @@ int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
 //string MYURL = "http://baidu.com"; // 一键加群的链接
-string MYURL = "https://item.taobao.com/item.htm?spm=a230r.1.14.8.30bd4e3dqk9kTD&id=651269419591&ns=1&abbucket=15#detail"; // 
+string MYURL = "https://item.taobao.com/item.htm?spm=a230r.1.14.8.30bd4e3dqk9kTD&id=651269419591&ns=1&abbucket=15#detail"; //
 // 将账号填入这里，英文逗号分割
 long loginAccounts[] = {6934445,1,2,3,4,5,6};
 
@@ -39,8 +39,8 @@ MTPanels *mtp;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-  Print("TERMINAL_SCREEN_DPI:",TerminalInfoInteger(TERMINAL_SCREEN_DPI));
-  int terminalDPI = TerminalInfoInteger(TERMINAL_SCREEN_DPI);
+   Print("TERMINAL_SCREEN_DPI:",TerminalInfoInteger(TERMINAL_SCREEN_DPI));
+   int terminalDPI = TerminalInfoInteger(TERMINAL_SCREEN_DPI);
    datetime NY=D'2022.02.23 08:43:00'; //到期时间
    datetime d1 = TimeLocal();
    if(d1>NY)
@@ -63,22 +63,28 @@ int OnInit()
       Sleep(3000);
       ExpertRemove();
      }
-     
+   int screen_dpi = TerminalInfoInteger(TERMINAL_SCREEN_DPI); // Find DPI of the user monitor
    int w = ChartWidthInPixels();
    int h = ChartHeightInPixels();
-   Print("w:",w," h: ",h);
+   Print("w:",w," h: ",h," dpi: ", screen_dpi);
+//--- Calculating the scaling factor as a percentage
+   int scale_factor=(TerminalInfoInteger(TERMINAL_SCREEN_DPI) * 100) / 96;
    int roww = w/4;
    if(roww <= 180)
      {
       roww = 180;
      }
+     int fontsize;
+   roww = roww*scale_factor/100;
+   fontsize = FontSize*scale_factor/100;
    int rowh = 21*(FontSize*3);
-   Print(rowh);
+   //Print(rowh);
    if(rowh<= 21*20)
      {
       rowh =21*20;
      }
-   Print(rowh);
+   //Print(rowh);
+   rowh = rowh*scale_factor/100;
    mtp = new MTPanels();
    if(!mtp.Create(0,"MT4交易助手",0,w-roww-20,20,w-20,rowh+20))
      {
@@ -94,7 +100,7 @@ int OnInit()
 
    mtp.Run();
    mtp.Minimized(false);
-   mtp.SetFontSize(FontSize);
+   mtp.SetFontSize(fontsize);
    return(INIT_SUCCEEDED);
   }
 
@@ -225,3 +231,4 @@ int ChartHeightInPixels(const long chart_ID=0)
   }
 //+------------------------------------------------------------------+
 
+//+------------------------------------------------------------------+
