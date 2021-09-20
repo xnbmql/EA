@@ -66,7 +66,6 @@ int OnInit()
    int screen_dpi = TerminalInfoInteger(TERMINAL_SCREEN_DPI); // Find DPI of the user monitor
    int w = ChartWidthInPixels();
    int h = ChartHeightInPixels();
-   Print("w:",w," h: ",h," dpi: ", screen_dpi);
 //--- Calculating the scaling factor as a percentage
    int scale_factor=(TerminalInfoInteger(TERMINAL_SCREEN_DPI) * 100) / 96;
    int roww = w/4;
@@ -85,6 +84,7 @@ int OnInit()
      }
    //Print(rowh);
    rowh = rowh*scale_factor/100;
+   Print("w:",roww," h: ",rowh," dpi: ", screen_dpi, " scale_factor:", scale_factor, " fontsize:",fontsize);
    mtp = new MTPanels();
    if(!mtp.Create(0,"MT4交易助手",0,w-roww-20,20,w-20,rowh+20))
      {
