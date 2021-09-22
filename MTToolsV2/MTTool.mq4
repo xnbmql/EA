@@ -68,14 +68,17 @@ int OnInit()
    int h = ChartHeightInPixels();
 //--- Calculating the scaling factor as a percentage
    int scale_factor=(TerminalInfoInteger(TERMINAL_SCREEN_DPI) * 100) / 96;
-   int roww = 240;
+
+   int roww =30*FontSize;
    if(roww <= 180)
      {
       roww = 180;
      }
-     int fontsize;
    roww = roww*scale_factor/100;
+
+   int fontsize;
    fontsize = FontSize*scale_factor/100;
+
    int rowh = 21*(FontSize*3);
    //Print(rowh);
    if(rowh<= 21*20)
