@@ -4,11 +4,10 @@
 //|                        Copyright 2021, MetaQuotes Software Corp. |
 //|  https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-2315001482 |
 //+------------------------------------------------------------------+
-//#property copyright  "一键加群"
-#property copyright  "程序定制"
+#property copyright  "一键加群"
 
-//#property link     "https://www.baidu.com"
-#property link     "https://item.taobao.com/item.htm?spm=a230r.1.14.8.30bd4e3dqk9kTD&id=651269419591&ns=1&abbucket=15#detail";
+
+#property link     "https://www.baidu.com"
 #property version   "1.00"
 #property strict
 
@@ -24,8 +23,8 @@ int PendingBuyOrderPoint = 0; // 挂单买入点数
 int PendingSellOrderPoint = 0; // 挂单卖出点数
 
 input int FontSize = 8; // 字体大小
-//string MYURL = "http://baidu.com"; // 一键加群的链接
-string MYURL = "https://item.taobao.com/item.htm?spm=a230r.1.14.8.30bd4e3dqk9kTD&id=651269419591&ns=1&abbucket=15#detail"; //
+string MYURL = "http://baidu.com"; // 一键加群的链接
+//string MYURL = "https://item.taobao.com/item.htm?spm=a230r.1.14.8.30bd4e3dqk9kTD&id=651269419591&ns=1&abbucket=15#detail"; //
 // 将账号填入这里，英文逗号分割
 long loginAccounts[] = {6934445,1,2,3,4,5,6};
 
@@ -80,12 +79,12 @@ int OnInit()
    fontsize = FontSize*scale_factor/100;
 
    int rowh = 21*(FontSize*3);
-   //Print(rowh);
+//Print(rowh);
    if(rowh<= 21*20)
      {
       rowh =21*20;
      }
-   //Print(rowh);
+//Print(rowh);
    rowh = rowh*scale_factor/100;
    Print("w:",roww," h: ",rowh," dpi: ", screen_dpi, " scale_factor:", scale_factor, " fontsize:",fontsize);
    mtp = new MTPanels();
